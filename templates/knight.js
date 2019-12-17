@@ -98,7 +98,7 @@ const CardForeground = styled.div({
   backgroundImage: `url(${asset("parchment.jpg")})`,
   backgroundSize: "fill",
   borderColor: COLORS.TAN_DARK,
-  borderWidth: 2,
+  borderWidth: 3,
   borderStyle: "solid",
   borderRadius: ins(0.125),
   padding: ins(0.125),
@@ -144,7 +144,7 @@ export default ({ name, type, description, ...props }) => {
             strokeWidth={4}
           />
 
-          <div>
+          <div style={{ textShadow: `0 1px 2px ${COLORS.TAN}` }}>
             <h1 style={{ marginBottom: 0, fontFamily: "NewRocker" }}>{name}</h1>
             <p style={{ fontFamily: "Roman SD", letterSpacing: -0.5 }}>
               {templateString(description, { name })}
