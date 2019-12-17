@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "build": "duck build",
+    "watch": "duck build --watch",
+    "proof": "duck build --proof"
+  },
+  "private": true,
+  "devDependencies": {
+    "duck-cli": "^1.5.1"
+  },
+  "dependencies": {
+    "@emotion/core": "^10.0.22",
+    "@emotion/styled": "^10.0.23",
+    "change-case": "^4.1.0",
+    "lodash": "^4.17.15",
+    "svg-to-react-cli": "^1.5.0"
+  }
+}
