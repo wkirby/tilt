@@ -1,32 +1,67 @@
+import styled from "@emotion/styled";
 import { snakeCase } from "change-case";
-import { ins } from "duck-cli";
+import { ins, asset } from "duck-cli";
 import { ProofWrapper } from "duck-cli/dist/components/Proof";
 import React from "react";
-import { Icons } from "./components/Icons";
+import { Icons, Sigils } from "./components/Icons";
 import { COLORS } from "./lib/colors";
 import { templateString } from "./lib/utils";
 
-const SigilCorners = ({ sigil, color, children, ...props }) => {
+const BorderLine = styled.hr({
+  margin: 0,
+  border: 0,
+  borderTopStyle: "solid",
+  borderTopWidth: 3,
+  position: "absolute"
+});
+
+const SigilCorners = ({ sigil, fill, stroke, children, ...props }) => {
   const sigilSize = ins(0.1875);
   const sigilInset = ins(0.25);
+  const Sigil = Sigils[sigil];
+
   return (
     <div {...props}>
-      <Icon
-        src={sigil}
-        color={color}
-        size={sigilSize}
+      <Sigil
+        width={sigilSize}
+        height={sigilSize}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={3}
         style={{ position: "absolute", top: sigilInset, left: sigilInset }}
       />
 
-      <Icon
-        src={sigil}
-        color={color}
-        size={sigilSize}
+      <Sigil
+        width={sigilSize}
+        height={sigilSize}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={3}
         style={{
           position: "absolute",
           bottom: sigilInset,
           right: sigilInset,
           transform: "rotate(180deg)"
+        }}
+      />
+
+      <BorderLine
+        style={{
+          borderTopWidth: 2,
+          borderColor: fill,
+          top: sigilInset + sigilSize / 2,
+          left: sigilInset + sigilSize,
+          right: sigilInset + sigilSize / 2
+        }}
+      />
+
+      <BorderLine
+        style={{
+          borderTopWidth: 2,
+          borderColor: fill,
+          bottom: sigilInset + sigilSize / 2,
+          right: sigilInset + sigilSize,
+          left: sigilInset + sigilSize / 2
         }}
       />
 
@@ -43,52 +78,70 @@ const getColor = col => {
   }
 };
 
-const getSigil = col => {
+const getBorderColor = col => {
   if (col === "RED") {
-    return "icons/red_knight.svg";
+    return COLORS.RED_DARK;
   } else {
-    return "icons/blue_knight.svg";
+    return COLORS.BLUE_DARK;
   }
 };
+
+const getSigil = col => {
+  if (col === "RED") {
+    return "red_knight";
+  } else {
+    return "blue_knight";
+  }
+};
+
+const CardForeground = styled.div({
+  backgroundImage: `url(${asset("parchment.jpg")})`,
+  backgroundSize: "fill",
+  borderColor: COLORS.TAN_DARK,
+  borderWidth: 2,
+  borderStyle: "solid",
+  borderRadius: ins(0.125),
+  padding: ins(0.125),
+  color: COLORS.BROWN,
+  backgroundColor: COLORS.TAN,
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
+  fontSize: 18
+});
+
+const CardBorder = styled.div({
+  height: "100%",
+  backgroundColor: COLORS.BROWN,
+  padding: ins(0.1875)
+});
 
 export default ({ name, type, description, ...props }) => {
   const iconName = snakeCase(name);
   const Icon = Icons[iconName];
   const knightColor = getColor(props.config._color);
+  const knightBorderColor = getBorderColor(props.config._color);
+  const sigil = getSigil(props.config._color);
 
   return (
     <ProofWrapper overlay={"minicard.png"}>
-      <div
-        style={{
-          height: "100%",
-          backgroundColor: COLORS.BROWN,
-          padding: ins(0.1875)
-        }}
-      >
-        <div
-          style={{
-            borderColor: COLORS.TAN_DARK,
-            borderWidth: 2,
-            borderStyle: "solid",
-            borderRadius: ins(0.125),
-            padding: ins(0.125),
-            color: COLORS.BROWN,
-            backgroundColor: COLORS.TAN,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            textAlign: "center",
-            fontSize: 18
-          }}
-        >
-          <Icon
-            width={ins(1.25)}
-            height={ins(1.25)}
+      <CardBorder>
+        <CardForeground>
+          <SigilCorners
             fill={knightColor}
-            stroke={COLORS.RED_DARK}
-            strokeWidth={3}
+            stroke={knightBorderColor}
+            sigil={sigil}
+          />
+
+          <Icon
+            width={ins(1)}
+            height={ins(1)}
+            fill={knightColor}
+            stroke={knightBorderColor}
+            strokeWidth={4}
           />
 
           <div>
@@ -97,8 +150,8 @@ export default ({ name, type, description, ...props }) => {
               {templateString(description, { name })}
             </p>
           </div>
-        </div>
-      </div>
+        </CardForeground>
+      </CardBorder>
     </ProofWrapper>
   );
 };
