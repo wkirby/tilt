@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import { snakeCase } from "change-case";
-import { ins, asset } from "duck-cli";
+import { asset, ins } from "duck-cli";
 import { ProofWrapper } from "duck-cli/dist/components/Proof";
 import React from "react";
 import { Icons, Sigils } from "./components/Icons";
 import { COLORS } from "./lib/colors";
 import { templateString } from "./lib/utils";
+import { Styles } from "./lib/styles";
+import _ from "lodash";
 
 const BorderLine = styled.hr({
   margin: 0,
@@ -95,11 +97,9 @@ const getSigil = col => {
 };
 
 const CardForeground = styled.div({
-  backgroundImage: `url(${asset("parchment.jpg")})`,
+  backgroundImage: `url(${asset("parchment.png")})`,
   backgroundSize: "fill",
-  borderColor: COLORS.TAN_DARK,
-  borderWidth: 3,
-  borderStyle: "solid",
+  backgroundBlendMode: "multiply",
   borderRadius: ins(0.125),
   padding: ins(0.125),
   color: COLORS.BROWN,
@@ -115,11 +115,121 @@ const CardForeground = styled.div({
 
 const CardBorder = styled.div({
   height: "100%",
+  backgroundImage: `url(${asset("parchment.png")})`,
+  backgroundSize: "fill",
+  backgroundBlendMode: "darken",
   backgroundColor: COLORS.BROWN,
   padding: ins(0.1875)
 });
 
-export default ({ name, type, description, ...props }) => {
+const DescriptionBlock = styled.div({
+  paddingLeft: ins(0.125),
+  paddingRight: ins(0.125),
+  lineHeight: "1.415",
+  textShadow: `0 1px 0 rgba(255,255,255,0.75)`
+});
+
+const StandardCard = ({
+  knightBorderColor,
+  knightColor,
+  Icon,
+  name,
+  sigil,
+  description
+}) => {
+  return (
+    <>
+      <SigilCorners
+        fill={knightColor}
+        stroke={knightBorderColor}
+        sigil={sigil}
+      />
+
+      {Icon && <Icon
+        width={ins(1)}
+        height={ins(1)}
+        fill={knightColor}
+        stroke={knightBorderColor}
+        strokeWidth={4}
+      />}
+
+      <DescriptionBlock>
+        <h1 style={Styles.Text.header}>{name}</h1>
+        <p style={Styles.Text.p}>{templateString(description)}</p>
+      </DescriptionBlock>
+    </>
+  );
+};
+
+const getTypeColor = type => {
+  switch (type) {
+    case 0:
+      return "white";
+    case 1:
+      return 'lightyellow';
+    case 2:
+      return 'lightgreen';
+    default:
+      return 'transparent';
+  }
+};
+
+const TargetBox = styled.div(props => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: ins(0.25),
+  height: ins(0.25),
+  backgroundColor: getTypeColor(props.type),
+  boxShadow: "inset 0 1px 4px rgba(0,0,0,0.1)",
+  border: `1px solid ${COLORS.BROWN}`,
+  borderRadius: ins(1 / 64),
+  fontFamily: "NewRocker",
+  fontSize: "1.5rem",
+  opacity: 0.9
+}));
+
+const GridBox = styled.div({
+  display: "grid",
+  gridTemplateColumns: "auto auto auto",
+  gridGap: ins(1 / 16)
+});
+
+const TargetGrid = props => {
+  const TARGETS = [
+    [0, 1, 0],
+    [1, 2, 1],
+    [0, 1, 0]
+  ];
+
+  return (
+    <div
+      style={{
+        backgroundImage: `url(${asset("shield.svg")})`,
+        backgroundSize: "fill",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+        backgroundBlendMode: "darken",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+      <GridBox>
+        {_.map(_.flatten(TARGETS), (type, i) => (
+          <TargetBox type={type} key={i}>
+            {type > 0 && `+${type}`}
+          </TargetBox>
+        ))}
+      </GridBox>
+    </div>
+  );
+};
+
+export default ({ name, description, ...props }) => {
   const iconName = snakeCase(name);
   const Icon = Icons[iconName];
   const knightColor = getColor(props.config._color);
@@ -130,26 +240,18 @@ export default ({ name, type, description, ...props }) => {
     <ProofWrapper overlay={"minicard.png"}>
       <CardBorder>
         <CardForeground>
-          <SigilCorners
-            fill={knightColor}
-            stroke={knightBorderColor}
-            sigil={sigil}
-          />
-
-          <Icon
-            width={ins(1)}
-            height={ins(1)}
-            fill={knightColor}
-            stroke={knightBorderColor}
-            strokeWidth={4}
-          />
-
-          <div style={{ textShadow: `0 1px 2px ${COLORS.TAN}` }}>
-            <h1 style={{ marginBottom: 0, fontFamily: "NewRocker" }}>{name}</h1>
-            <p style={{ fontFamily: "Roman SD", letterSpacing: -0.5 }}>
-              {templateString(description, { name })}
-            </p>
-          </div>
+          {name === "target" ? (
+            <TargetGrid />
+          ) : (
+            <StandardCard
+              Icon={Icon}
+              knightColor={knightColor}
+              knightBorderColor={knightBorderColor}
+              sigil={sigil}
+              name={name}
+              description={description}
+            />
+          )}
         </CardForeground>
       </CardBorder>
     </ProofWrapper>

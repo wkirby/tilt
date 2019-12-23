@@ -5,5 +5,6 @@ export const COLORS = {
     RED_DARK: '#B6482B',
     TAN: '#F0ECCB',
     TAN_DARK: '#F0ECCB',
-    BROWN: '#463211'
+    BROWN: '#463211',
+    GRAY_DARK: '#46463E'
 }

@@ -13,6 +13,8 @@ import { LanceIcon } from "./icons/LanceIcon";
 import { RedKnightSigil } from "./icons/RedKnightSigil";
 import { ThrustIcon } from "./icons/ThrustIcon";
 import { AccelerateIcon } from "./icons/AccelerateIcon";
+import { FeintIcon } from "./icons/FeintIcon";
+import { ParryIcon } from "./icons/ParryIcon";
 
 export const Icons = {
   hasten: AccelerateIcon,
@@ -27,7 +29,9 @@ export const Icons = {
   deflect_up: DeflectUpIcon,
   lance: LanceIcon,
   block: BlockIcon,
-  thrust: ThrustIcon
+  thrust: ThrustIcon,
+  feint: FeintIcon,
+  parry: ParryIcon
 };
 
 export const Sigils = {
